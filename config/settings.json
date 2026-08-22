@@ -8,6 +8,14 @@
     "max_retries": 3,
     "rate_limit_seconds": 0.25
   },
+  "frisco_source": {
+    "name": "frisco_active_building_permits",
+    "layer_url": "https://maps.friscotexas.gov/gis/rest/services/Public/External_Planning_and_Zoning/MapServer/1",
+    "record_limit": 2000,
+    "timeout_seconds": 30,
+    "max_retries": 3,
+    "rate_limit_seconds": 0.25
+  },
   "scoring": {
     "dfw_geography": 25,
     "residential_fit": 25,

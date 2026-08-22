@@ -17,7 +17,7 @@ def score_signal(signal: ProjectSignal, weights: Dict[str, Any]) -> ProjectSigna
     score = 0
 
     score += int(weights["dfw_geography"])
-    reasons.append("Fort Worth/DFW +{0}".format(weights["dfw_geography"]))
+    reasons.append("geografía DFW +{0}".format(weights["dfw_geography"]))
     residential = any(term in text for term in RESIDENTIAL)
     new_construction = " / new" in text or text.startswith("new ") or "new building" in text or "subdivision" in text
     if residential and new_construction:

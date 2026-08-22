@@ -45,10 +45,23 @@ def top_signals(path: Path, limit: int, minimum_score: int) -> List[tuple]:
             """SELECT opportunity_score, project_name, city, project_type, start_date,
                       estimated_value, COALESCE(NULLIF(builder,''), general_contractor, ''),
                       owner_developer, plumbing_relevance, reason_for_score, source, source_url,
-                      address, project_stage
+                      address, project_stage, square_feet
                FROM project_signals WHERE opportunity_score >= ?
                ORDER BY opportunity_score DESC, start_date DESC LIMIT ?""",
             [minimum_score, limit],
+        ).fetchall()
+
+
+def top_signals_for_source(path: Path, source: str, limit: int, minimum_score: int) -> List[tuple]:
+    with duckdb.connect(str(path), read_only=True) as db:
+        return db.execute(
+            """SELECT opportunity_score, project_name, city, project_type, start_date,
+                      estimated_value, COALESCE(NULLIF(builder,''), general_contractor, ''),
+                      owner_developer, plumbing_relevance, reason_for_score, source, source_url,
+                      address, project_stage, square_feet
+               FROM project_signals WHERE opportunity_score >= ? AND source = ?
+               ORDER BY opportunity_score DESC, start_date DESC LIMIT ?""",
+            [minimum_score, source, limit],
         ).fetchall()
 
 

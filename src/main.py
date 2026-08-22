@@ -9,9 +9,10 @@ from src.dashboard import serve
 from src.intelligence.deduplication import deduplicate
 from src.intelligence.scoring import score_signal
 from src.outputs.csv_export import export_accounts_csv, export_csv
-from src.pipelines.normalize import normalize_fort_worth
+from src.pipelines.normalize import normalize_fort_worth, normalize_frisco
 from src.sources.arcgis import fetch_permits
-from src.storage.duckdb import save_signals, top_accounts, top_signals
+from src.sources.frisco import fetch_active_permits
+from src.storage.duckdb import save_signals, top_accounts, top_signals, top_signals_for_source
 
 ROOT = Path(__file__).resolve().parents[1]
 DB = ROOT / "data/market_radar.duckdb"
@@ -24,11 +25,16 @@ def settings() -> dict:
 
 
 def collect(source: str) -> int:
-    if source not in ("arcgis", "fort_worth"):
-        raise SystemExit("Fuente soportada en el MVP: arcgis")
     cfg = settings()
-    raw = fetch_permits(cfg)
-    signals = [score_signal(normalize_fort_worth(item, cfg["source"]["layer_url"]), cfg["scoring"]) for item in raw]
+    signals = []
+    if source in ("arcgis", "fort_worth", "all"):
+        raw = fetch_permits(cfg)
+        signals.extend(score_signal(normalize_fort_worth(item, cfg["source"]["layer_url"]), cfg["scoring"]) for item in raw)
+    if source in ("frisco", "all"):
+        raw = fetch_active_permits(cfg)
+        signals.extend(score_signal(normalize_frisco(item, cfg["frisco_source"]["layer_url"]), cfg["scoring"]) for item in raw)
+    if not signals:
+        raise SystemExit("Fuentes soportadas: arcgis, frisco, all")
     count = save_signals(DB, deduplicate(signals))
     print("Guardados {0} permisos reales en {1}".format(count, DB))
     return count
@@ -36,7 +42,15 @@ def collect(source: str) -> int:
 
 def rank(top: int) -> int:
     cfg = settings()
-    rows = top_signals(DB, top, int(cfg["scoring"]["minimum_export_score"]))
+    minimum = int(cfg["scoring"]["minimum_export_score"])
+    if top >= 10:
+        frisco_quota = max(1, round(top * 0.3))
+        fort_worth_quota = top - frisco_quota
+        rows = top_signals_for_source(DB, "fort_worth_arcgis_permits", fort_worth_quota, minimum)
+        rows += top_signals_for_source(DB, "frisco_active_building_permits", frisco_quota, minimum)
+        rows.sort(key=lambda row: (row[0], row[4].isoformat() if row[4] else ""), reverse=True)
+    else:
+        rows = top_signals(DB, top, minimum)
     count = export_csv(CSV, rows)
     account_count = export_accounts_csv(ACCOUNTS_CSV, top_accounts(DB, 50, 70))
     print("Exportadas {0} oportunidades a {1}".format(count, CSV))
@@ -55,7 +69,7 @@ def main() -> None:
     args = parser.parse_args()
     if args.command == "collect": collect(args.source)
     elif args.command == "rank": rank(args.top)
-    elif args.command == "demo": collect("arcgis"); rank(50); serve(DB, port=args.port)
+    elif args.command == "demo": collect("all"); rank(50); serve(DB, port=args.port)
     elif args.command == "serve": serve(DB, port=args.port)
 
 

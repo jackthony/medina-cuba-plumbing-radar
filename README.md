@@ -1,6 +1,6 @@
 # Medina Cuba Plumbing — DFW Project & Builder Radar
 
-MVP reproducible que convierte permisos públicos de Fort Worth en oportunidades comerciales priorizadas para plumbing subcontracting.
+MVP reproducible que convierte permisos públicos de Fort Worth y Frisco en oportunidades comerciales priorizadas para plumbing subcontracting.
 
 ## Demo rápida
 
@@ -16,18 +16,21 @@ También se puede ejecutar por etapas:
 
 ```bash
 .venv/bin/python -m src.main collect --source arcgis
+.venv/bin/python -m src.main collect --source frisco
+.venv/bin/python -m src.main collect --source all
 .venv/bin/python -m src.main rank --top 50
 .venv/bin/python -m src.main serve
 ```
 
 ## Fuente y supuestos
 
-- Fuente: City of Fort Worth Development Permits, ArcGIS Feature Service público.
+- Fuentes: City of Fort Worth Development Permits y City of Frisco Active Building Permits, servicios ArcGIS públicos.
 - Ventana: últimos 120 días; permisos residenciales y comerciales.
 - `B1_SPECIAL_TEXT` se trata como candidato a builder/GC, no como contacto verificado.
 - `File_Date` indica fecha del permiso, no fecha contractual de inicio.
 - El score es configurable en `config/settings.json` y no utiliza LLM.
 - Algunos registros municipales no publican dirección, valor o contratista. Esas ausencias se conservan; no se inventan.
+- Frisco publica proyectos y tamaño, pero no builder/owner ni valor; se muestran como oportunidades para investigación, no como contactos verificados.
 
 ## Seguridad
 

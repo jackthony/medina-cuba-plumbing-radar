@@ -75,3 +75,32 @@ def looks_like_company(value: str) -> bool:
     text = " {0} ".format(value.upper())
     company_markers = (" LLC ", " INC ", " LTD ", " CORP ", " HOMES", "BUILDERS", "CONSTRUCTION", "CONTRACTING", "PLUMBING")
     return bool(value) and any(marker in text for marker in company_markers)
+
+
+def normalize_frisco(raw: Dict[str, Any], layer_url: str) -> ProjectSignal:
+    permit_no = str(raw.get("Permit_No") or raw.get("OBJECTID") or "unknown")
+    subtype = str(raw.get("Permit_Subtype") or "").upper()
+    stage = "New" if subtype in ("SNEW", "MNEW", "CNEW") else subtype
+    project_type = " / ".join(filter(None, [str(raw.get("Type") or "").strip(), stage]))
+    scope = str(raw.get("Description") or "").strip()
+    square_feet = None
+    match = re.search(r"([0-9][0-9,]*)\s*SF\b", scope, flags=re.IGNORECASE)
+    if match:
+        square_feet = parse_number(match.group(1))
+    return ProjectSignal(
+        source="frisco_active_building_permits",
+        source_project_id=permit_no,
+        project_name=str(raw.get("Project_Name") or "Permit {0}".format(permit_no)).strip(),
+        address=str(raw.get("Address") or "").strip(),
+        city="Frisco",
+        county="",
+        state="TX",
+        project_type=project_type,
+        project_stage=str(raw.get("Status") or "").strip(),
+        start_date=parse_arcgis_date(raw.get("Issued_Date")),
+        scope=scope,
+        square_feet=square_feet,
+        plumbing_relevance="high" if "RESIDENTIAL" in project_type.upper() else "medium",
+        source_url=str(raw.get("Hyperlink") or layer_url).strip(),
+        raw_payload=raw,
+    )

@@ -3,7 +3,7 @@ from datetime import date
 from src.intelligence.deduplication import deduplicate
 from src.intelligence.scoring import score_signal
 from src.models.project_signal import ProjectSignal
-from src.pipelines.normalize import normalize_fort_worth, parse_arcgis_date, parse_number
+from src.pipelines.normalize import normalize_fort_worth, normalize_frisco, parse_arcgis_date, parse_number
 
 
 WEIGHTS = {"dfw_geography":25,"residential_fit":25,"recent_or_upcoming":15,"attractive_value_or_size":10,"builder_identified":10,"plumbing_likelihood":10,"researchable":5,"small_remodel_penalty":-15,"inactive_penalty":-25}
@@ -39,6 +39,15 @@ def test_generic_metro_code_is_not_used_as_project_or_builder():
     signal = normalize_fort_worth(raw, "https://example.test/0")
     assert signal.project_name == "New / Single Family Residence — 10 MAIN ST"
     assert signal.builder == ""
+
+
+def test_normalize_frisco_multifamily_and_square_feet():
+    raw = {"Permit_No":"B25-1", "Permit_Subtype":"MNEW", "Type":"Multi-Family Residential", "Address":"5001 TEST DR", "Description":"554473 SF, FIELD NORTH", "Status":"ISSUED", "Issued_Date":"06/10/2026", "Project_Name":"Fields North", "Hyperlink":"https://example.test/permit"}
+    signal = normalize_frisco(raw, "https://example.test/layer")
+    assert signal.city == "Frisco"
+    assert signal.project_type == "Multi-Family Residential / New"
+    assert signal.square_feet == 554473
+    assert signal.start_date == date(2026, 6, 10)
 
 
 def test_scoring_is_bounded_and_explained():
