@@ -1,0 +1,24 @@
+{
+  "source": {
+    "name": "fort_worth_arcgis_permits",
+    "layer_url": "https://services5.arcgis.com/3ddLCBXe1bRt7mzj/arcgis/rest/services/CFW_Open_Data_Development_Permits_View/FeatureServer/0",
+    "lookback_days": 120,
+    "record_limit": 1000,
+    "timeout_seconds": 30,
+    "max_retries": 3,
+    "rate_limit_seconds": 0.25
+  },
+  "scoring": {
+    "dfw_geography": 25,
+    "residential_fit": 25,
+    "recent_or_upcoming": 15,
+    "attractive_value_or_size": 10,
+    "builder_identified": 10,
+    "plumbing_likelihood": 10,
+    "researchable": 5,
+    "small_remodel_penalty": -15,
+    "inactive_penalty": -25,
+    "minimum_export_score": 40
+  }
+}
+

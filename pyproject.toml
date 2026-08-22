@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcp-market-radar"
+version = "0.1.0"
+description = "DFW public-data opportunity radar for Medina Cuba Plumbing"
+requires-python = ">=3.9"
+dependencies = ["duckdb==1.3.2"]
+
+[project.optional-dependencies]
+dev = ["pytest==8.3.5"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
