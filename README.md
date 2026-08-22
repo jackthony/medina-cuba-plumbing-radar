@@ -1,5 +1,7 @@
 # Medina Cuba Plumbing — DFW Project Radar
 
+[![CI](https://github.com/jackthony/medina-cuba-plumbing-radar/actions/workflows/ci.yml/badge.svg)](https://github.com/jackthony/medina-cuba-plumbing-radar/actions/workflows/ci.yml)
+
 ## En una frase
 
 Este radar encuentra proyectos de construcción nuevos en fuentes públicas de Dallas–Fort Worth y los convierte en una lista priorizada de oportunidades para que Medina Cuba Plumbing sepa **qué proyectos investigar y qué empresas contactar primero**.
@@ -75,6 +77,17 @@ Por etapas:
 ## Seguridad
 
 El MVP utiliza HTTP estándar y una sola dependencia de ejecución fijada por versión: DuckDB. No incluye contraseñas, no ejecuta scripts remotos, no automatiza navegadores, no evita CAPTCHA y no accede a plataformas privadas.
+
+## Integración continua (CI)
+
+GitHub Actions ejecuta automáticamente una verificación en cada `push` y `pull request` dirigido a `main`:
+
+1. prepara Python 3.11;
+2. instala únicamente las versiones exactas de DuckDB y pytest usando paquetes binarios;
+3. compila `src` y `tests` para detectar errores de sintaxis;
+4. ejecuta toda la suite de pruebas.
+
+El workflow tiene permisos de solo lectura, utiliza acciones oficiales de GitHub fijadas a commits exactos y no contiene secretos ni despliegue continuo (CD). El archivo está en [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ## Próximo paso recomendado
 
