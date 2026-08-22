@@ -22,15 +22,39 @@ def test_normalize_incomplete_record():
     assert signal.raw_payload == {"ObjectId": 7}
 
 
+def test_normalize_constructs_address_and_rejects_non_company_label():
+    raw = {"Permit_No":"PB-1", "Addr_No":14916, "Street_Name":"REYES", "Street_Suffix":"RD", "B1_SPECIAL_TEXT":"Fire Rebuild"}
+    signal = normalize_fort_worth(raw, "https://example.test/0")
+    assert signal.address == "14916 REYES RD"
+    assert signal.builder == ""
+
+
+def test_normalize_recognizes_builder_candidate():
+    signal = normalize_fort_worth({"Permit_No":"PB-2", "B1_SPECIAL_TEXT":"M/I HOMES OF DFW LLC"}, "https://example.test/0")
+    assert signal.builder == "M/I HOMES OF DFW LLC"
+
+
+def test_generic_metro_code_is_not_used_as_project_or_builder():
+    raw = {"Permit_No":"PB-3", "Addr_No":10, "Street_Name":"MAIN", "Street_Suffix":"ST", "Permit_SubType":"New", "Use_Type":"Single Family Residence", "B1_SPECIAL_TEXT":"METRO CODE"}
+    signal = normalize_fort_worth(raw, "https://example.test/0")
+    assert signal.project_name == "New / Single Family Residence — 10 MAIN ST"
+    assert signal.builder == ""
+
+
 def test_scoring_is_bounded_and_explained():
     signal = ProjectSignal(source="x", source_project_id="1", project_name="New single family residence", address="1 Main", owner_developer="Builder", builder="Builder", start_date=date.today(), estimated_value=500000)
     scored = score_signal(signal, WEIGHTS)
     assert 80 <= scored.opportunity_score <= 100
-    assert "fit residencial" in scored.reason_for_score
+    assert "construcción residencial nueva" in scored.reason_for_score
+
+
+def test_remodel_scores_below_new_construction():
+    new = ProjectSignal(source="x", source_project_id="1", project_name="House", project_type="Residential Building Permit / New / Single Family Residence", start_date=date.today())
+    remodel = ProjectSignal(source="x", source_project_id="2", project_name="House remodel", project_type="Residential Building Permit / Remodel / Single Family Residence", start_date=date.today())
+    assert score_signal(new, WEIGHTS).opportunity_score > score_signal(remodel, WEIGHTS).opportunity_score
 
 
 def test_deduplication_uses_source_identity():
     a = ProjectSignal(source="x", source_project_id="1", project_name="A")
     b = ProjectSignal(source="x", source_project_id="1", project_name="B")
     assert len(deduplicate([a, b])) == 1
-

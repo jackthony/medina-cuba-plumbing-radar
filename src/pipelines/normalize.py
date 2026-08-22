@@ -33,13 +33,18 @@ def parse_number(value: Any) -> Optional[float]:
 
 def normalize_fort_worth(raw: Dict[str, Any], layer_url: str) -> ProjectSignal:
     permit_no = str(raw.get("Permit_No") or raw.get("Unique_ID") or raw.get("ObjectId") or "unknown")
-    address = str(raw.get("Full_Street_Address") or raw.get("Location_1") or "").strip()
+    address_parts = [raw.get("Addr_No"), raw.get("Direction"), raw.get("Street_Name"), raw.get("Street_Suffix"), raw.get("Street_Suffix_Dir")]
+    constructed_address = " ".join(str(part).strip() for part in address_parts if part not in (None, ""))
+    address = str(raw.get("Full_Street_Address") or constructed_address or "").strip()
     special = str(raw.get("B1_SPECIAL_TEXT") or "").strip()
     work = str(raw.get("B1_WORK_DESC") or "").strip()
     if work.upper() == "B1_WORK_DESC":
         work = ""
     use = " / ".join(filter(None, [str(raw.get("Use_Type") or "").strip(), str(raw.get("Specific_Use") or "").strip()]))
-    project_name = special or ("{0} — {1}".format(use, address) if use and address else "Permit {0}".format(permit_no))
+    useful_special = special if special.upper() not in ("METRO CODE", "B1_WORK_DESC", "NA") else ""
+    fallback_label = " / ".join(filter(None, [str(raw.get("Permit_SubType") or "").strip(), use]))
+    project_name = useful_special or ("{0} — {1}".format(fallback_label, address) if fallback_label and address else "Permit {0}".format(permit_no))
+    builder = special if looks_like_company(special) else ""
     source_url = layer_url.rstrip("/") + "/query?" + urlencode_safe("ObjectId={0}".format(raw.get("ObjectId", "")))
     return ProjectSignal(
         source="fort_worth_arcgis_permits",
@@ -51,8 +56,8 @@ def normalize_fort_worth(raw: Dict[str, Any], layer_url: str) -> ProjectSignal:
         start_date=parse_arcgis_date(raw.get("File_Date")),
         estimated_value=parse_number(raw.get("JobValue")),
         owner_developer=str(raw.get("Owner_Full_Name") or "").strip(),
-        general_contractor=special,
-        builder=special,
+        general_contractor=builder,
+        builder=builder,
         scope=work or use,
         square_feet=parse_number(raw.get("SqFt")),
         source_url=source_url,
@@ -65,3 +70,8 @@ def urlencode_safe(where: str) -> str:
 
     return urlencode({"where": where, "outFields": "*", "returnGeometry": "false", "f": "html"})
 
+
+def looks_like_company(value: str) -> bool:
+    text = " {0} ".format(value.upper())
+    company_markers = (" LLC ", " INC ", " LTD ", " CORP ", " HOMES", "BUILDERS", "CONSTRUCTION", "CONTRACTING", "PLUMBING")
+    return bool(value) and any(marker in text for marker in company_markers)

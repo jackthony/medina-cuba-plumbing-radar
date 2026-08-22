@@ -16,9 +16,8 @@
     "builder_identified": 10,
     "plumbing_likelihood": 10,
     "researchable": 5,
-    "small_remodel_penalty": -15,
+    "small_remodel_penalty": -20,
     "inactive_penalty": -25,
     "minimum_export_score": 40
   }
 }
-

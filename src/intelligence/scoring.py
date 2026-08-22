@@ -5,9 +5,9 @@ from typing import Any, Dict, List
 
 from src.models.project_signal import ProjectSignal
 
-RESIDENTIAL = ("residential", "single family", "multi-family", "multifamily", "townhome", "apartment", "new building")
-PLUMBING = ("residential", "commercial", "new", "addition", "multifamily", "single family", "apartment")
-SMALL_REMODEL = ("minor remodel", "repair", "replace", "foundation repair")
+RESIDENTIAL = ("residential", "single family", "multi-family", "multifamily", "townhome", "townhouse", "apartment", "duplex")
+PLUMBING = ("new", "addition", "multifamily", "single family", "apartment", "townhome", "townhouse", "duplex")
+SMALL_REMODEL = ("remodel", "repair", "replace", "foundation repair")
 INACTIVE = ("expired", "cancel", "complete", "closed", "denied", "void")
 
 
@@ -18,10 +18,17 @@ def score_signal(signal: ProjectSignal, weights: Dict[str, Any]) -> ProjectSigna
 
     score += int(weights["dfw_geography"])
     reasons.append("Fort Worth/DFW +{0}".format(weights["dfw_geography"]))
-    if any(term in text for term in RESIDENTIAL):
+    residential = any(term in text for term in RESIDENTIAL)
+    new_construction = " / new" in text or text.startswith("new ") or "new building" in text or "subdivision" in text
+    if residential and new_construction:
         score += int(weights["residential_fit"])
-        reasons.append("fit residencial +{0}".format(weights["residential_fit"]))
+        reasons.append("construcción residencial nueva +{0}".format(weights["residential_fit"]))
         signal.plumbing_relevance = "high"
+    elif residential:
+        partial_fit = int(weights["residential_fit"]) // 2
+        score += partial_fit
+        reasons.append("fit residencial parcial +{0}".format(partial_fit))
+        signal.plumbing_relevance = "medium"
     elif "commercial" in text:
         score += int(weights["residential_fit"]) // 2
         reasons.append("fit comercial selectivo +{0}".format(int(weights["residential_fit"]) // 2))
@@ -33,7 +40,8 @@ def score_signal(signal: ProjectSignal, weights: Dict[str, Any]) -> ProjectSigna
     if (signal.estimated_value or 0) >= 100000 or (signal.square_feet or 0) >= 5000:
         score += int(weights["attractive_value_or_size"])
         reasons.append("escala atractiva +{0}".format(weights["attractive_value_or_size"]))
-    if signal.builder or signal.general_contractor:
+    owner_is_company = any(marker in signal.owner_developer.upper() for marker in (" LLC", " INC", " LTD", " CORP", " HOMES", " DEVELOPMENT", " DEVELOPER"))
+    if signal.builder or signal.general_contractor or owner_is_company:
         score += int(weights["builder_identified"])
         reasons.append("builder/GC identificado +{0}".format(weights["builder_identified"]))
     if any(term in text for term in PLUMBING):
@@ -52,4 +60,3 @@ def score_signal(signal: ProjectSignal, weights: Dict[str, Any]) -> ProjectSigna
     signal.opportunity_score = max(0, min(100, score))
     signal.reason_for_score = "; ".join(reasons)
     return signal
-

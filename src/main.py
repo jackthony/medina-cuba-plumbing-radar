@@ -8,14 +8,15 @@ from pathlib import Path
 from src.dashboard import serve
 from src.intelligence.deduplication import deduplicate
 from src.intelligence.scoring import score_signal
-from src.outputs.csv_export import export_csv
+from src.outputs.csv_export import export_accounts_csv, export_csv
 from src.pipelines.normalize import normalize_fort_worth
 from src.sources.arcgis import fetch_permits
-from src.storage.duckdb import save_signals, top_signals
+from src.storage.duckdb import save_signals, top_accounts, top_signals
 
 ROOT = Path(__file__).resolve().parents[1]
 DB = ROOT / "data/market_radar.duckdb"
 CSV = ROOT / "data/top_opportunities.csv"
+ACCOUNTS_CSV = ROOT / "data/top_target_companies.csv"
 
 
 def settings() -> dict:
@@ -37,7 +38,9 @@ def rank(top: int) -> int:
     cfg = settings()
     rows = top_signals(DB, top, int(cfg["scoring"]["minimum_export_score"]))
     count = export_csv(CSV, rows)
+    account_count = export_accounts_csv(ACCOUNTS_CSV, top_accounts(DB, 50, 70))
     print("Exportadas {0} oportunidades a {1}".format(count, CSV))
+    print("Exportadas {0} empresas objetivo a {1}".format(account_count, ACCOUNTS_CSV))
     return count
 
 
@@ -58,4 +61,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -51,3 +51,21 @@ def top_signals(path: Path, limit: int, minimum_score: int) -> List[tuple]:
             [minimum_score, limit],
         ).fetchall()
 
+
+def top_accounts(path: Path, limit: int = 20, minimum_score: int = 70) -> List[tuple]:
+    with duckdb.connect(str(path), read_only=True) as db:
+        return db.execute(
+            """SELECT COALESCE(NULLIF(builder,''), NULLIF(owner_developer,'')) AS target_company,
+                      COUNT(*) AS active_permits, MAX(opportunity_score) AS max_score,
+                      SUM(COALESCE(estimated_value, 0)) AS total_permit_value,
+                      MAX(start_date) AS latest_permit,
+                      STRING_AGG(DISTINCT project_type, ' | ') AS project_types,
+                      MAX(address) AS example_address, MAX(source_url) AS source_url
+               FROM project_signals
+               WHERE opportunity_score >= ? AND target_company IS NOT NULL
+                 AND UPPER(target_company) NOT IN ('CITY OF FORT WORTH', 'FORT WORTH ISD', 'TARRANT COUNTY')
+               GROUP BY target_company
+               ORDER BY active_permits DESC, max_score DESC, total_permit_value DESC
+               LIMIT ?""",
+            [minimum_score, limit],
+        ).fetchall()

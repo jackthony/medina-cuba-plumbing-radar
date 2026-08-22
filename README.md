@@ -10,7 +10,7 @@ python3 -m venv .venv
 .venv/bin/python -m src.main demo
 ```
 
-Abre <http://127.0.0.1:8765>. El comando consulta datos reales, conserva el payload original en DuckDB, deduplica, calcula un score determinístico y exporta `data/top_opportunities.csv`.
+Abre <http://127.0.0.1:8765>. El comando consulta datos reales, conserva el payload original en DuckDB, deduplica, calcula un score determinístico y exporta `data/top_opportunities.csv` y `data/top_target_companies.csv`.
 
 También se puede ejecutar por etapas:
 
