@@ -31,11 +31,15 @@ Explicar las tres bandas de capacidad. Aclarar que todavía medimos permisos obs
 
 Abrir un proyecto como Fields, Silverleaf o The Link at PGA. Enseñar el nombre, dirección, tipo, superficie y el enlace al permiso municipal.
 
-### 4. Mostrar un score
+### 4. Mostrar “Referencias de la reunión”
+
+Explicar que el radar ya separa desarrollos, contratistas, canales y entidades públicas. Pedir a Marilyn que marque **Quiero explorar**, **Investigar** o **No prioridad** y que añada una nota.
+
+### 5. Mostrar un score
 
 “El Opportunity Score no adivina quién nos contratará. Prioriza señales. Después usamos Company Confidence para validar quién es la empresa, qué papel tiene y si realmente puede contratar el plumbing.”
 
-### 5. Cerrar con el siguiente paso
+### 6. Cerrar con el siguiente paso
 
 “Ahora debemos agrupar permisos por desarrollo y builder, estimar la escala con evidencia, validar las primeras diez empresas y solamente entonces usar Apollo para encontrar al responsable correcto.”
 
@@ -56,6 +60,8 @@ Abrir un proyecto como Fields, Silverleaf o The Link at PGA. Enseñar el nombre,
 - Base local DuckDB.
 - Dashboard local y CSV.
 - Enlaces a la evidencia municipal.
+- Revisión en pantalla con decisiones, notas y exportación CSV.
+- Referencias de la reunión clasificadas por su función real.
 
 ## Qué todavía no está terminado
 
@@ -79,6 +85,10 @@ Para revisar primero proyectos nuevos, recientes y de tamaño atractivo, en vez 
 
 **¿Por qué no usar Apollo desde el inicio?**  
 Primero necesitamos saber qué proyecto y qué empresa merecen contacto. Apollo sirve después para localizar a la persona adecuada.
+
+**¿Home Depot es cliente directo de MCP?**
+
+No debe presentarse así. Marilyn confirmó que Same Day contrata a MCP para trabajos cuyo cliente final compra en Home Depot.
 
 **¿Cuál es la limitación principal?**  
 Los municipios publican campos diferentes y no siempre identifican al builder o GC. Por eso toda señal requiere validación antes de contactar.

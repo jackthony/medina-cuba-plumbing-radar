@@ -1,5 +1,6 @@
 from datetime import date
 
+from src.dashboard import MEETING_TARGETS, _review_id
 from src.intelligence.deduplication import deduplicate
 from src.intelligence.scoring import score_signal
 from src.models.project_signal import ProjectSignal
@@ -82,3 +83,17 @@ def test_presentation_metrics_report_observed_data_without_annualizing(tmp_path)
         ("fort_worth", 1, date(2026, 8, 1), date(2026, 8, 1)),
         ("frisco", 1, date(2026, 8, 2), date(2026, 8, 2)),
     ]
+
+
+def test_meeting_references_keep_contractual_relationship_clear():
+    targets = {target["name"]: target for target in MEETING_TARGETS}
+    assert targets["Same Day Water Heaters"]["kind"] == "Contratista / cliente contractual"
+    assert targets["The Home Depot · Home Services"]["kind"] == "Canal final / no cliente directo"
+    assert targets["Frisco West WCID of Denton County"]["kind"] == "Entidad pública / inteligencia"
+
+
+def test_review_ids_are_stable_and_do_not_expose_source_text():
+    first = _review_id("meeting", "https://example.test/project")
+    assert first == _review_id("meeting", "https://example.test/project")
+    assert first != _review_id("meeting", "https://example.test/other")
+    assert "example" not in first

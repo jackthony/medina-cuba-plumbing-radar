@@ -24,6 +24,7 @@ Public data → Project signal → Qualification score → Builder/developer
 5. Calcula un score explicable de 0 a 100.
 6. Guarda los datos en DuckDB.
 7. Produce un dashboard local y dos CSV: proyectos y empresas objetivo.
+8. Permite marcar proyectos y referencias como **Quiero explorar**, **Investigar** o **No prioridad**, añadir notas y descargar las decisiones.
 
 ## Fuentes actuales
 
@@ -45,13 +46,13 @@ Dallas no fue añadido porque el dataset abierto localizado es histórico y el p
 
 Los pesos están en `config/settings.json`. El scoring no utiliza un LLM.
 
-## Resultado validado el 22 de agosto de 2026
+## Resultado técnico base validado el 22 de agosto de 2026
 
 - 1,000 registros recientes recibidos de Fort Worth y 900 permisos únicos guardados.
 - 715 registros activos recibidos de Frisco y 713 permisos únicos guardados.
 - 1,613 señales totales en DuckDB.
 - Exportación final balanceada: 35 oportunidades Fort Worth y 15 Frisco.
-- 9 pruebas automatizadas aprobadas.
+- 12 pruebas automatizadas aprobadas al 29 de agosto de 2026.
 
 Ejemplos de empresas con múltiples permisos: GRBK Edgewood LLC, D.R. Horton–Texas Ltd, Forestar, Perry Homes y LGI Homes.
 
@@ -82,3 +83,12 @@ Antes de añadir más tecnología, revisar manualmente las diez empresas princip
 - resultado ganado o perdido.
 
 El objetivo de esa validación es demostrar que las señales públicas se convierten en pipeline comercial real.
+
+## Decisiones comerciales confirmadas el 29 de agosto de 2026
+
+- Encaje ideal: 300–600 viviendas/año.
+- Menos de 300 queda con prioridad menor; no se elimina automáticamente.
+- Más de 600 no se descarta; se evalúa como secundario o por fases.
+- Same Day Water Heaters es el contratante informado para trabajos cuyo cliente final compra en Home Depot; no se debe afirmar que Home Depot contrata directamente a MCP.
+- B2C será un carril separado para propietarios; no debe mezclarse con el radar B2B.
+- El portafolio requiere distinguir cliente contractual, cliente final mencionable y permisos de fotos, logos y testimonios.
