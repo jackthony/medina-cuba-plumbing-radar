@@ -4,6 +4,7 @@ from src.intelligence.deduplication import deduplicate
 from src.intelligence.scoring import score_signal
 from src.models.project_signal import ProjectSignal
 from src.pipelines.normalize import normalize_fort_worth, normalize_frisco, parse_arcgis_date, parse_number
+from src.storage.duckdb import radar_summary, save_signals, source_coverage
 
 
 WEIGHTS = {"dfw_geography":25,"residential_fit":25,"recent_or_upcoming":15,"attractive_value_or_size":10,"builder_identified":10,"plumbing_likelihood":10,"researchable":5,"small_remodel_penalty":-15,"inactive_penalty":-25}
@@ -67,3 +68,17 @@ def test_deduplication_uses_source_identity():
     a = ProjectSignal(source="x", source_project_id="1", project_name="A")
     b = ProjectSignal(source="x", source_project_id="1", project_name="B")
     assert len(deduplicate([a, b])) == 1
+
+
+def test_presentation_metrics_report_observed_data_without_annualizing(tmp_path):
+    path = tmp_path / "radar.duckdb"
+    save_signals(path, [
+        ProjectSignal(source="fort_worth", source_project_id="1", project_name="House", project_type="Residential Building Permit / New / Single Family Residence", start_date=date(2026, 8, 1)),
+        ProjectSignal(source="frisco", source_project_id="2", project_name="Store", project_type="Commercial / New", start_date=date(2026, 8, 2)),
+    ])
+
+    assert radar_summary(path) == (2, 2, 1)
+    assert source_coverage(path) == [
+        ("fort_worth", 1, date(2026, 8, 1), date(2026, 8, 1)),
+        ("frisco", 1, date(2026, 8, 2), date(2026, 8, 2)),
+    ]

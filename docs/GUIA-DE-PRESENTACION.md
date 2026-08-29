@@ -2,7 +2,7 @@
 
 ## Explicación de 30 segundos
 
-> Construimos un radar que revisa permisos públicos de construcción en Fort Worth y Frisco. El sistema identifica proyectos recientes, les asigna una prioridad de 0 a 100 y muestra qué builders o developers tienen más actividad. La idea es que Medina Cuba Plumbing encuentre oportunidades antes de buscar contactos y pueda concentrar su tiempo comercial en proyectos con mejor probabilidad de necesitar plumbing.
+> Construimos un radar que revisa permisos públicos de Fort Worth y Frisco para detectar builders y desarrollos residenciales antes de buscar contactos. Medina Cuba Plumbing busca proyectos compatibles con su capacidad actual: idealmente 300–600 viviendas por año. Un proyecto mayor no se descarta, pero se considera secundario o se evalúa por fases.
 
 ## El mensaje principal
 
@@ -25,7 +25,7 @@ Encontrar el proyecto
 
 ### 2. Mostrar la parte superior del radar
 
-Explicar que la tabla de empresas agrupa varios permisos de una misma organización. Una empresa con muchos proyectos nuevos puede ser más valiosa que un permiso aislado.
+Explicar las tres bandas de capacidad. Aclarar que todavía medimos permisos observados, no viviendas anuales confirmadas.
 
 ### 3. Mostrar Frisco
 
@@ -33,11 +33,19 @@ Abrir un proyecto como Fields, Silverleaf o The Link at PGA. Enseñar el nombre,
 
 ### 4. Mostrar un score
 
-“El score no adivina quién nos contratará. Solo prioriza usando reglas visibles: ubicación DFW, construcción nueva, fecha reciente, tamaño y disponibilidad de una empresa investigable.”
+“El Opportunity Score no adivina quién nos contratará. Prioriza señales. Después usamos Company Confidence para validar quién es la empresa, qué papel tiene y si realmente puede contratar el plumbing.”
 
 ### 5. Cerrar con el siguiente paso
 
-“Ahora debemos validar las primeras diez empresas, encontrar al estimator, project manager o purchasing manager y medir cuántas señales se convierten en conversaciones, estimates y bids.”
+“Ahora debemos agrupar permisos por desarrollo y builder, estimar la escala con evidencia, validar las primeras diez empresas y solamente entonces usar Apollo para encontrar al responsable correcto.”
+
+## Guion de 90 segundos
+
+1. “No estamos mostrando una lista comprada: son señales municipales con evidencia.”
+2. “El foco de MCP son desarrollos de 300–600 viviendas por año; más de 600 puede interesar por fases.”
+3. “El score actual dice qué investigar primero, no quién contratará.”
+4. “La siguiente capa confirma empresa, rol en el proyecto y escala anual.”
+5. “Apollo entra al final para encontrar a la persona; no reemplaza el radar.”
 
 ## Qué sí está terminado
 
@@ -74,4 +82,3 @@ Primero necesitamos saber qué proyecto y qué empresa merecen contacto. Apollo 
 
 **¿Cuál es la limitación principal?**  
 Los municipios publican campos diferentes y no siempre identifican al builder o GC. Por eso toda señal requiere validación antes de contactar.
-

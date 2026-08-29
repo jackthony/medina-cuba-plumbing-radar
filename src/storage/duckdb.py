@@ -82,3 +82,26 @@ def top_accounts(path: Path, limit: int = 20, minimum_score: int = 70) -> List[t
                LIMIT ?""",
             [minimum_score, limit],
         ).fetchall()
+
+
+def radar_summary(path: Path) -> tuple:
+    """Return presentation-safe counts without inferring annual production."""
+    with duckdb.connect(str(path), read_only=True) as db:
+        return db.execute(
+            """SELECT COUNT(*) AS signal_count,
+                      COUNT(DISTINCT source) AS source_count,
+                      SUM(CASE WHEN project_type ILIKE '%Residential Building Permit / New / Single Family Residence%'
+                               THEN 1 ELSE 0 END) AS new_single_family_permits
+               FROM project_signals"""
+        ).fetchone()
+
+
+def source_coverage(path: Path) -> List[tuple]:
+    """Describe the exact observed date window for every municipal source."""
+    with duckdb.connect(str(path), read_only=True) as db:
+        return db.execute(
+            """SELECT source, COUNT(*) AS signal_count, MIN(start_date), MAX(start_date)
+               FROM project_signals
+               GROUP BY source
+               ORDER BY source"""
+        ).fetchall()
