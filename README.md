@@ -33,10 +33,14 @@ El sistema no garantiza contratos. Reduce el tiempo necesario para encontrar opo
 - Un radar web local en <http://127.0.0.1:8765>.
 - Una lista de proyectos priorizados.
 - Una lista de builders/developers con varios permisos activos.
+- Una sección de referencias compartidas por Marilyn, clasificadas por su función real.
+- Botones para marcar **Quiero explorar**, **Investigar** o **No prioridad**, añadir una nota y descargar las decisiones en CSV.
 - Evidencia enlazada al permiso municipal original.
 - Exportaciones CSV para revisión o uso posterior en Google Sheets.
 
-Consulta el [guion sencillo para presentar el MVP](docs/GUIA-DE-PRESENTACION.md) y el [resumen autocontenido para ChatGPT](docs/RESUMEN-PARA-CHATGPT.md).
+Consulta el [guion sencillo para presentar el MVP](docs/GUIA-DE-PRESENTACION.md), el [resumen autocontenido para ChatGPT](docs/RESUMEN-PARA-CHATGPT.md), el [plan de acción de la reunión](docs/PLAN-DE-ACCION-2026-08-29.md) y la [auditoría digital inicial](docs/AUDITORIA-DIGITAL-2026-08-29.md).
+
+Las decisiones de revisión se guardan en el navegador que está usando el radar. Para pasarlas a otra persona se descarga el CSV. Esta versión todavía no es un sistema colaborativo en línea.
 
 ## Resultados de la ejecución validada
 
@@ -55,6 +59,8 @@ Los resultados cambian cuando las ciudades actualizan sus datos.
 - Frisco publica proyecto, dirección y tamaño, pero no siempre publica empresa o valor.
 - Toda empresa debe verificarse antes de iniciar outreach.
 - El score ordena la investigación; no sustituye el criterio comercial.
+- Home Depot no debe presentarse como cliente directo de MCP: según la confirmación de Marilyn, Same Day Water Heaters es la entidad que contrata a MCP para esos trabajos.
+- Los contactos personales y comerciales se mantienen fuera de este repositorio público y se registran solamente en las hojas privadas de operación.
 
 ## Ejecución técnica
 
